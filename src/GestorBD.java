@@ -50,35 +50,37 @@ public class GestorBD {
         List<Trainer> trainerList = new ArrayList<>();
 
         //trainers
-        expression = "doc('/db/practica/trainerdex.xml')/trainers/trainer";
+        expression = "doc('/db/practica/trainerdex.xml')/trainers/trainer/name/string()";
         xqrs = xqe.executeQuery(expression);
 
         while (xqrs.next()) {
             Trainer trainer = new Trainer();
+            trainer.nombre = xqrs.getItemAsString(null);
             trainerList.add(trainer);
 
         }
 
         for (int i = 0; i < trainerList.size(); i++) {
-            //name
-            expression = "doc('/db/practica/trainerdex.xml')/trainers/trainer/name/string()";
-            xqrs = xqe.executeQuery(expression);
-            while (xqrs.next()) {
-                trainerList.get(i).nombre = xqrs.getItemAsString(null);
-            }
-
             //title
-            expression = "doc('/db/practica/trainerdex.xml')/trainers/trainer/title/string()";
+            expression = "doc('/db/practica/trainerdex.xml')/trainers/trainer[name=\""+trainerList.get(i).nombre+"\"]/title/string()";
             xqrs = xqe.executeQuery(expression);
             while (xqrs.next()) {
                 trainerList.get(i).titulo = xqrs.getItemAsString(null);
+                //System.out.println(xqrs.getItemAsString(null));
             }
 
             //pokemons
-            expression = "doc('/db/practica/trainerdex.xml')/trainers/belt/pokemon/species/string()";
+            expression = "doc('/db/practica/trainerdex.xml')/trainers/trainer[name=\""+trainerList.get(i).nombre+"\"]/belt/pokemon/species/string()";
             xqrs = xqe.executeQuery(expression);
+            List<String> listapokemons = new ArrayList<>();
             while (xqrs.next()) {
-                trainerList.get(i).pokemons = xqrs.getItemAsString(null);
+                listapokemons.add(xqrs.getItemAsString(null));
+            }
+
+            for (String pok : listapokemons) {
+                if (trainerList.get(i).pokemons == null) trainerList.get(i).pokemons = pok + ";";
+                else trainerList.get(i).pokemons += pok + ";";
+
             }
 
 
@@ -106,110 +108,54 @@ public class GestorBD {
 
 
 
-    public void nuevoAtaquePokemonEntrenado() throws XQException { //te pide entrenador y nombre de pokemon; se piden datos del ataque
-    }
+    public void nuevoAtaquePokemonEntrenado() throws XQException {
 
+        Scanner scanner = new Scanner(System.in);
 
-
-    public void olvidaAtaquePokemonEntrenado() throws XQException { //te pide entrenador, nombre de pokemon y nombre del ataque pa borrarlo
-    }
-
-
-    /*
-    public List<Emp> treureEmpleats(String codi) throws XQException, ParseException {
-
-        XQExpression xqe = conn.createExpression();
-        String expression;
-        XQResultSequence xqrs;
-        List<Emp> emplist = new ArrayList<>();
-
-        //empleats
-        expression = "doc('/db/empresa/empresa.xml')/empresa/empleats/emp[@dept='"+codi+"']/@codi/string()";
-        xqrs = xqe.executeQuery(expression);
-
-        while (xqrs.next()) {
-            Emp emp = new Emp();
-            emp.codi = xqrs.getItemAsString(null);
-            emplist.add(emp);
-
-        }
-
-        for (int i = 0; i < emplist.size(); i++) {
-            //dept/cap
-            emplist.get(i).dept = codi;
-            expression = "doc('/db/empresa/empresa.xml')/empresa/empleats/emp[@codi='"+emplist.get(i).codi+"']/@cap/string()";
-            xqrs = xqe.executeQuery(expression);
-            while (xqrs.next()) {
-                emplist.get(i).cap = xqrs.getItemAsString(null);
-            }
-
-            //cognom
-            expression = "doc('/db/empresa/empresa.xml')/empresa/empleats/emp[@codi='"+emplist.get(i).codi+"']/cognom/string()";
-            xqrs = xqe.executeQuery(expression);
-            while (xqrs.next()) {
-                emplist.get(i).cognom = xqrs.getItemAsString(null);
-            }
-
-            //ofici
-            expression = "doc('/db/empresa/empresa.xml')/empresa/empleats/emp[@codi='"+emplist.get(i).codi+"']/ofici/string()";
-            xqrs = xqe.executeQuery(expression);
-            while (xqrs.next()) {
-                emplist.get(i).ofici = xqrs.getItemAsString(null);
-            }
-
-            //dataalta
-            expression = "doc('/db/empresa/empresa.xml')/empresa/empleats/emp[@codi='"+emplist.get(i).codi+"']/dataAlta/string()";
-            xqrs = xqe.executeQuery(expression);
-            while (xqrs.next()) {
-                emplist.get(i).dataAlta = new SimpleDateFormat("yyyy-MM-dd").parse(xqrs.getItemAsString(null));
-            }
-
-            //salari
-            expression = "doc('/db/empresa/empresa.xml')/empresa/empleats/emp[@codi='"+emplist.get(i).codi+"']/salari/string()";
-            xqrs = xqe.executeQuery(expression);
-            while (xqrs.next()) {
-                emplist.get(i).salari = Integer.parseInt(xqrs.getItemAsString(null));
-            }
-
-            //comissio
-            expression = "doc('/db/empresa/empresa.xml')/empresa/empleats/emp[@codi='"+emplist.get(i).codi+"']/comissio/string()";
-            xqrs = xqe.executeQuery(expression);
-            while (xqrs.next()) {
-                emplist.get(i).comissio = Integer.parseInt(xqrs.getItemAsString(null));
-            }
-
-        }
-
-        return emplist;
-    }
-
-     */
-
-    /*
-    public List<Emp> editarEmpleats(List<Emp> empList, String codi, String noucodi) throws XQException {
-
-        for (int i = 0; i < empList.size(); i++) {
-            empList.get(i).dept = noucodi;
-        }
+        System.out.print("Nombre del entrenador que posee el pokemon: ");
+        String entrenador = scanner.nextLine();
+        System.out.print("Nombre del pokemon: ");
+        String pokemon = scanner.nextLine();
+        System.out.print("Nombre del ataque: ");
+        String nombreataque = scanner.nextLine();
+        System.out.print("Tipo del ataque: ");
+        String tipoataque = scanner.nextLine();
+        System.out.print("PP del ataque: ");
+        String ppataque = scanner.nextLine();
 
         XQExpression xqe = conn.createExpression();
-        String update2 = "update value \n"
-                + "doc('/db/empresa/empresa.xml')/empresa/empleats/emp[@dept=\"" + codi + "\"]/@dept \n" +
-                "with '"+noucodi+"'";
-        xqe.executeCommand(update2);
+        String insert = "update insert \n"+
+                "<attack>\n" +
+                "\t<name>" + nombreataque + "</name>\n" +
+                "\t<type>" + tipoataque + "</type>\n" +
+                "\t<PP>" + ppataque + "</PP>\n" +
+                "</attack>" +
+                "preceding doc('/db/practica/trainerdex.xml')/trainers/trainer[name=\""+ entrenador + "\"]/belt/pokemon[name=\""+ pokemon +"\"]/attacks/attack[1]";
 
-        return empList;
+        xqe.executeCommand(insert);
     }
 
-    public void esborrarEmpleats(String codi) throws XQException {
+
+
+    public void olvidaAtaquePokemonEntrenado() throws XQException {
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Nombre del entrenador que posee el pokemon: ");
+        String entrenador = scanner.nextLine();
+        System.out.print("Nombre del pokemon: ");
+        String pokemon = scanner.nextLine();
+        System.out.print("Nombre del ataque: ");
+        String nombreataque = scanner.nextLine();
+
 
         XQExpression xqe = conn.createExpression();
         String delete = "update delete \n"
-                + "doc('/db/empresa/empresa.xml')/empresa/empleats/emp[@dept=\"" + codi + "\"]";
+                + "doc('/db/practica/trainerdex.xml')/trainers/trainer[name=\""+ entrenador + "\"]/belt/pokemon[name=\""+ pokemon +"\"]/attacks/attack[name=\"" + nombreataque + "\"]";
         xqe.executeCommand(delete);
     }
 
-     */
+
 
     public void tancarSessio() throws XQException {
         System.out.println("Tancant sessió . . .");

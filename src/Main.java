@@ -9,11 +9,14 @@ public class Main {
         boolean open = true;
 
         while (open) {
-            System.out.println("" +
-                    "1. a\n" +
-                    "2. a\n" +
-                    "3. a\n" +
-                    "4. a\n");
+            System.out.println("//////////////////\n// Pokemon App //\nHecho en Java/XQJ por David Álvarez e Iván Campos\n\n" +
+                    "1. Mostrar lista de pokemons\n" +
+                    "2. Mostrar lista de entrenadores\n" +
+                    "3. Mostrar lista de ataques\n" +
+                    "4. Mostrar lista de pokemons con ataques\n" +
+                    "5. Cambiar especie de pokemon\n" +
+                    "6. Crear ataque de pokemon\n" +
+                    "7. Borrar ataque de pokemon\n");
 
             String menu = scanner.next();
 
@@ -23,7 +26,7 @@ public class Main {
                     gestorBD.mostrarPokemons();
                     break;
                 case "2":
-                    gestorBD.mostrarEntrenadores();
+                    System.out.println(gestorBD.mostrarEntrenadores());
                     break;
                 case "3":
                     gestorBD.mostrarAtaques();
